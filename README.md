@@ -3,7 +3,7 @@
 
 > Retrieval-Augmented Generation on your own documents, runnable on a
 > lightweight laptop (CPU-only).
-
+> (Final project of the AI & ML summer course at Aalto University)
 ```bash
 pip install -r requirements.txt
 python ingest.py          # build FAISS from *.txt docs
