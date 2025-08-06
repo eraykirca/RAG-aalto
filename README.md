@@ -17,18 +17,20 @@ python app.py             # interactive Q&A
    - Retriever:	Top-4 cosine + top-2 header-similarity (cap = 6)
    - Generator:	google/flan-t5-large (512-token, CPU)
    - CLI: Generates answer based on relevant chunks
-   - Sample corpus: verdecharge.txt, datashield_act.txt, cardiosense.txt
+   - Sample corpus: verdecharge.txt, datashield.txt, cardiosense.txt
 
 # 📂 Repo layout
-   -├── data/
-   -│   ├── verdecharge.txt          # smart-grid EV platform
-   -│   ├── datashield_act.txt       # draft privacy legislation
-   -│   └── cardiosense.txt          # remote cardiac monitoring
-   -├── vectorstore/                 # auto-created FAISS index + chunks JSON
-   -├── ingest.py                    # chunk → embed → FAISS
-   -├── retriever.py                 # cosine + header similarity
-   -├── app.py                       # build prompt, call Flan-T5
-   -└── requirements.txt
+```bash
+   ├── data/
+   │   ├── verdecharge.txt          smart-grid EV platform
+   │   ├── datashield_act.txt       draft privacy legislation
+   │   └── cardiosense.txt          remote cardiac monitoring
+   ├── vectorstore/                 auto-created FAISS index + chunks JSON
+   ├── ingest.py                    chunk → embed → FAISS
+   ├── retriever.py                 cosine + header similarity
+   ├── app.py                       build prompt, call Flan-T5
+   └── requirements.txt
+```
 
 # 🚀 Setup & Usage
 git clone https://github.com/your-handle/rag-starter.git
