@@ -57,7 +57,7 @@ python app.py
    ----------
    More text…
    ```
-3. Run python ingest.py again (re-embeds everything).
+3. Run python ingest.py again with the modified file path. (re-embeds everything)
 4. Start asking.
 
 # ⚙️ Config knobs
