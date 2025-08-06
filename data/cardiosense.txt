@@ -1,0 +1,109 @@
+CardioSense: Remote Cardiac Monitoring & Risk-Prediction Platform
+Overview
+--------
+CardioSense is an end-to-end tele-cardiology system that streams wearable
+ECG data, detects arrhythmias in real time, and predicts 30-day cardiac
+event risk.  It combines edge signal processing, transformer ECG
+embeddings and retrieval-augmented clinical feedback.
+
+System Components
+-----------------
+- Android/iOS app for patients (BLE ingest, symptom diary)  
+- Clinician dashboard (alerts, PDF reports, HL7 FHIR export)  
+- Backend stack on Google Cloud (Pub/Sub, Cloud Run, BigQuery)
+
+Signal-Processing Pipeline
+--------------------------
+1. Edge device (BioPatch v3) sends 250 Hz raw lead I ECG via BLE.  
+2. Phone app performs on-device QRS detection; transmits 250 ms windows.  
+3. Cloud service runs ArrhyNet-v2 transformer (15 M params) → 128-D
+   embedding per beat.  
+4. Embeddings stored in FAISS IVFPQ (256 clusters, 32×8 bits).
+
+Key Algorithms
+--------------
+1. **Arrhythmia Classifier** — F1 0.94 on MIT-BIH (AF, VT, PVC).  
+2. **Risk Score Model** — XGBoost + ECG embedding + vitals → predicts
+   30-day MACE, AUROC 0.89.  
+3. **RAG Explainer** — Retrieval of top-k similar historic ECGs (FAISS),
+   GPT-4-Turbo generates clinician-readable explanation.
+
+Methodology
+-----------
+- 12 000 patient-years from three hospitals (de-identified).  
+- 1.2 B ECG beats; labeled arrhythmias validated by cardiologists.
+
+Embedding
+---------
+- Each heartbeat → 128-D vector via ArrhyNet-v2 CLS token.  
+- Normalized, stored with patient ID & timestamp.
+
+Query & Feedback
+----------------
+1. Incoming beat embeds → cosine search (k=3) against adverse-event DB.  
+2. If similarity > 0.82 and risk score > 0.6 → alert cardiologist.  
+3. GPT-4 summarises: “Pattern resembles patient #A43 two days before VT.”
+4. Notification pushed to dashboard + SMS fallback.
+
+Example Use Case
+----------------
+A 62-year-old CHF patient feels dizzy; within 30 s CardioSense detects
+short-run VT, risk score 0.76. Clinician receives alert with three nearest
+historic matches and initiates same-day medication adjustment, preventing
+ER visit.
+
+Security & Compliance
+---------------------
+- HIPAA & GDPR compliant; BAA in place with Google Cloud.  
+- Data encrypted at rest (AES-256) and in transit (TLS 1.3).  
+- Continuous SOC 2 monitoring (Drata).
+
+API Specification
+-----------------
+Base URL: `https://api.cardiosense.health/v1`  
+Auth: OAuth 2.1 PKCE
+
+Endpoints
+---------
+1. `POST /ingest` — BLE gateway posts `{ ecg_raw, ts, patient_id }`.  
+2. `GET /report/{patient}` — returns PDF echo & ECG findings.  
+3. `POST /alert/ack` — clinician acknowledges alert (ISO 8601 timestamp).
+
+User Manual (v1.9)
+------------------
+Getting Started
+---------------
+1. Pair BioPatch with app → enter clinic code.  
+2. Wear device for ≥ 18 h/day; charge nightly.  
+3. View daily summary (avg HR, arrhythmia count).  
+4. Doctor can push educational content (“how to handle palpitations”).
+
+Plans & Pricing
+---------------
+HomeCare    | $12 |Features Arrhythmia detection, app        
+ClinicPro   | $35 |Features Dashboard, EHR export            
+ResearchMax | $49 |Features Raw data API, analytics console  
+
+Business Model & Revenue
+------------------------
+- SaaS subscription
+- Device margin ($22 per BioPatch)  
+- Pharma-sponsored clinical trials data (opt-in, rev-share 60 / 40)
+
+Cost Structure
+--------------
+- Cloud infra: $6k / month  
+- FDA Class II device upkeep: $1.5k  
+- Support nurses (24 × 7): $8k
+
+Growth Strategy
+---------------
+- Partnerships with cardiology clinics (first 3 months free)  
+- CMS Remote Patient Monitoring reimbursement integration  
+- Consumer launch with Fitbit ECG API Q4 2026
+
+Future Roadmap
+--------------
+- Llama-3-Lite on-device inference (no cloud needed)  
+- Multi-lead wearable (V2 patch)  
+- Sleep-apnea detection module

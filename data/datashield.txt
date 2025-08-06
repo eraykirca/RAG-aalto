@@ -1,0 +1,102 @@
+DataShield Act 2030
+Preamble
+--------
+An Act to establish a unified federal framework governing Personal Data,
+to create the Data Accountability Authority (DAA) and to harmonize state
+privacy laws.
+
+Definitions
+-----------
+- "Personal Data": information relating to an identified or identifiable
+  natural person.  
+- "Controller": entity determining purposes & means of processing.  
+- "Processor": entity processing on behalf of a Controller.  
+- "High-Risk Processing": profiling, large-scale biometrics, or automated
+  decisions with legal effect ≥ \$5 k.
+
+Individual Rights
+-----------------
+1. Right to Access (Art 7) — machine-readable export in 15 days.  
+2. Right to Erasure (Art 8) — cascades to all downstream Processors.  
+3. Right to Algorithmic Explanation (Art 9) — plain-language summary of
+   high-risk models, including features & weight ranges.  
+4. Right to Data Portability (Art 10) — direct API transfer to new service.
+
+Controller Obligations
+----------------------
+- Data-Protection Officer if > 50 k records processed / year.  
+- Data-Protection Impact Assessment (DPIA) for any dataset > 1 M records.  
+- Annual third-party audit; summary published on DAA website.  
+- Breach notification within 48 h.
+
+Enforcement & Penalties
+-----------------------
+- Civil fines up to **4 %** of global revenue or **\$ 40 M**, whichever is
+  higher.  
+- Criminal liability (Class E felony) for willful re-identification.  
+- DAA may issue corrective orders; repeated non-compliance → injunction.
+
+Methodology (Implementation Roadmap)
+-------------------------------------
+I: Draft | 2026 Q2 | FTC, Senate Commerce | Public draft + RIS
+II: Comment | 2026 Q3 | NGOs, Industry | Revised bill  
+III: Pilot | 2027 | 2 volunteer states | Test DAA portal
+IV: Full Enforcement | Jan 2030 | All | DAA operational
+
+Technical Guidelines (DAA)
+--------------------------
+1. JSON-LD schema for DPIA submission.  
+2. Standardised API (`/.well-known/datarights`) for access & erasure.  
+3. Encryption at rest: AES-256-GCM; in transit: TLS 1.3.  
+4. Differential-privacy noise for statistical releases (ε ≤ 1).
+
+Comparative Table
+-----------------
+Max fine (% revenue)      |GDPR 4 %  |CCPA none |DataShield 2030 **4 %**
+Algorithmic explanation   |GDPR art.22 |CCPA n/a |DataShield 2030 **yes**
+Breach notice (hours)     |GDPR 72   |CCPA 72   |DataShield 2030 **48**
+Federal pre-emption       |GDPR n/a  |CCPA partial |DataShield 2030 **full**
+
+Example Scenario
+----------------
+A fintech uses facial-emotion analysis for loan approval. Under DataShield
+it must:  
+1. Conduct a DPIA.  
+2. Provide opt-out for sensitive data.  
+3. Supply algorithmic rationale (“emotion score < 0.3”).  
+4. Offer manual review upon denial.
+
+Compliance API Specification
+----------------------------
+Base URL: `https://api.daa.gov/v1`  
+Auth: OAuth 2.1 JWT
+
+Endpoints
+---------
+1. `POST /dpio` — upload DPIA JSON-LD (max 10 MB).  
+2. `POST /erasure` — `{ subject_id, controller_id }`.  
+3. `GET /status/{ticket}` — polling job status.
+
+Citizen Guide (v1.0)
+--------------------
+Getting Started
+---------------
+1. Visit `myrights.daa.gov`.  
+2. Enter email → verify code.  
+3. Browse data-holding companies & request export.
+
+Plans & Budget
+--------------
+- FY 2027: $120 M (setup + pilot)  
+- FY 2028+: $48 M / year (staff 320, infra, grants)
+
+Growth & Outreach Strategy
+--------------------------
+- Public ad campaign “Data Matters” (TV, TikTok)  
+- University clinics for pro-bono privacy counselling  
+- Grants for open-source compliance tooling
+
+Future Amendments
+-----------------
+- Kids-specific protections (under 13)  
+- IoT Device Labeling standard (QR + cryptographic attest)

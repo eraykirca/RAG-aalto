@@ -1,0 +1,134 @@
+VerdeCharge: A Platform for Smart-Grid EV Charging Optimization
+Overview
+--------
+VerdeCharge is a cloud-native optimization system that schedules electric-
+vehicle charging to minimize carbon intensity, demand charges and feeder
+strain. It ingests real-time grid CO₂ signals, day-ahead tariffs and user
+constraints, then produces actionable charging plans for homes, fleets and
+public stations.
+
+The system includes:
+- A responsive web app for drivers
+- A Fleet Manager dashboard for logistics operators
+- An OCPP-compatible gateway (VerdeHub) for commercial chargers
+- A serverless backend on AWS (Lambda, DynamoDB, EventBridge)
+
+Key Components
+--------------
+1. Carbon-Aware Scheduling Engine  
+   - Inputs: WattTime CO₂ forecast, wholesale ISO prices, transformer
+     capacity limits.  
+   - Solver: MILP formulated in Pyomo, solved via Gurobi 10.  
+   - Output: Per-vehicle set-points (start time, stop time, power level).
+
+2. Telemetry Pipeline  
+   - OCPP 1.6 JSON messages received over TLS 1.3.  
+   - MQTT topic hierarchy (`/fleet/<id>/charger/<id>/metrics`).  
+   - Stream processing in AWS Kinesis → DynamoDB.
+
+3. Dynamic Tariff Module  
+   - Integrates with 27 U.S. utilities (PG&E, ConEd, ERCOT) + ENTSO-E.  
+   - Calculates marginal \$ / kWh vs kg CO₂ / kWh.  
+   - Supports user-selectable optimization weight α (0 = cost only,
+     1 = carbon only).
+
+4. Fleet Manager Dashboard  
+   - Live map (OpenLayers) with charger status.  
+   - Predictive-maintenance alerts from XGBoost temperature-drift model.  
+   - Carbon-savings leaderboard across depot sites.
+
+Methodology
+-----------
+1. Data Ingest  
+   - Charger metrics (V, A, kWh) → Kinesis Firehose → S3 (Parquet).  
+   - Forecasts polled every 5 min; merged into 5-min buckets.
+
+2. Optimization Loop  
+   - Triggered when: a) new vehicle plugs in, or b) forecast updates.  
+   - MILP decision variables: binary on/off for each 5-min slot, power
+     level (0–22 kW).  
+   - Constraints: transformer kVA limit, user SOC target, utility peak
+     window, ISO ramp-rate caps.
+
+3. Execution & Feedback  
+   - Schedule commands pushed via OCPP `RemoteStartTransaction` &
+     `SetChargingProfile`.  
+   - Savings report emailed nightly (kg CO₂, \$, kWh shifted).
+
+Example Use Case
+----------------
+A grocery-delivery fleet of 25 vans docks at 18:00 with 40 % SOC and must
+reach 90 % by 05:30. VerdeCharge shifts 76 % of consumption to 01:00–04:00
+when grid CO₂ is 187 g/kWh (vs 432 g/kWh at 19:00). Result:  
+- Carbon saved: **18.7 kg** (-43 %)  
+- Demand-charge reduction: **\$ 51** (ISO-NE off-peak rate)  
+- Vehicles ready by 05:18.
+
+Security and Privacy
+--------------------
+- ISO 27001 and SOC 2 Type II certified.  
+- At-rest encryption via AWS KMS CMK.  
+- OCPP traffic over TLS 1.3, certificate-pinned per charger.  
+- Personal data (driver emails) auto-deleted after 90 days inactivity.
+
+VerdeHub API Specification
+--------------------------
+Protocol: HTTPS + JSON (all endpoints idempotent)  
+Auth: JWT signed with ES256; expires 15 min; refreshed via OAuth 2.0 PKCE.
+
+Endpoints
+---------
+1. `POST /api/v1/schedule`  
+   - Input: `{ vin, desired_soc, departure_time }`  
+   - Output: `{ start: ISO8601, stop: ISO8601, kw: float }`
+
+2. `POST /api/v1/telemetry`  
+   - Charger → backend every 30 s  
+   - Body: `{ voltage, current, temp, soc, timestamp }`
+
+3. `GET /api/v1/report/{fleet_id}`  
+   - Returns daily savings CSV.
+
+User Manual (Getting Started)
+------------------
+1. Create fleet in dashboard → download config QR.  
+2. Scan QR on each charger to link to fleet.  
+3. Set default optimization weight α (0–1).  
+4. Review carbon-savings widgets after first night.
+
+Plans & Limits
+--------------
+| Plan   | Price / month | Chargers | Features                     |
+|--------|---------------|----------|------------------------------|
+| Basic  | \$ 49         | 1–10     | Carbon scheduling only       |
+| Pro    | \$ 149        | 1–50     | Fleet dashboard, API access  |
+| Elite  | \$ 549        | 50–250   | Predictive maintenance, SLA  |
+
+Basic: $49, Chargers: 1-10, Features: Carbon scheduling only
+Pro: $149, Chargers: 1-50, Features: Fleet dashboard, API access
+Elite: $549, Chargers: 50-250, Features: Predictive maintenance, SLA
+
+Business Model & Revenue Streams
+--------------------------------
+- SaaS subscription (above)  
+- Carbon-credit brokerage (5 % fee on automated credit sales)  
+- White-label API for utilities (\$0.002 / kWh scheduled)
+
+Cost Structure
+--------------
+- AWS infra: $8k / month  
+- Solver licenses (Gurobi): $2k  
+- Data API fees (forecasts): $1.2k  
+- Support: $4k staff salaries
+
+Growth Strategy
+---------------
+- Partnership with ChargePoint OEMs  
+- EU Horizon 2030 grant application  
+- Referral program: 1 free month per recruited depot
+
+Future Roadmap
+--------------
+- Vehicle-to-Grid bidirectional control  
+- ISO 15118 Plug&Charge support  
+- Android Auto & CarPlay app
