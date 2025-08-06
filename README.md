@@ -11,13 +11,13 @@ python app.py             # interactive Q&A
 ```
 
 # ✨ Features
-   Document formats:	Plain-text with markdown headers (Header\n----)
-   Embeddings:	MiniLM-L6-v2 (ingest) • BGE-Small-v1.5 (query)
-   Vector: DB	FAISS IndexFlatIP (cosine)
-   Retriever:	Top-4 cosine + top-2 header-similarity (cap = 6)
-   Generator:	google/flan-t5-large (512-token, CPU)
-   CLI: Generates answer based on relevant chunks
-   Sample corpus: verdecharge.txt, datashield_act.txt, cardiosense.txt
+   - Document formats:	Plain-text with markdown headers (Header\n----)
+   - Embeddings:	MiniLM-L6-v2 (ingest) • BGE-Small-v1.5 (query)
+   - Vector: DB	FAISS IndexFlatIP (cosine)
+   - Retriever:	Top-4 cosine + top-2 header-similarity (cap = 6)
+   - Generator:	google/flan-t5-large (512-token, CPU)
+   - CLI: Generates answer based on relevant chunks
+   - Sample corpus: verdecharge.txt, datashield_act.txt, cardiosense.txt
 
 # 📂 Repo layout
 ├── data/
