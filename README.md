@@ -20,15 +20,15 @@ python app.py             # interactive Q&A
    - Sample corpus: verdecharge.txt, datashield_act.txt, cardiosense.txt
 
 # 📂 Repo layout
--├── data/
--│   ├── verdecharge.txt          # smart-grid EV platform
--│   ├── datashield_act.txt       # draft privacy legislation
--│   └── cardiosense.txt          # remote cardiac monitoring
--├── vectorstore/                 # auto-created FAISS index + chunks JSON
--├── ingest.py                    # chunk → embed → FAISS
--├── retriever.py                 # cosine + header similarity
--├── app.py                       # build prompt, call Flan-T5
--└── requirements.txt
+   -├── data/
+   -│   ├── verdecharge.txt          # smart-grid EV platform
+   -│   ├── datashield_act.txt       # draft privacy legislation
+   -│   └── cardiosense.txt          # remote cardiac monitoring
+   -├── vectorstore/                 # auto-created FAISS index + chunks JSON
+   -├── ingest.py                    # chunk → embed → FAISS
+   -├── retriever.py                 # cosine + header similarity
+   -├── app.py                       # build prompt, call Flan-T5
+   -└── requirements.txt
 
 # 🚀 Setup & Usage
 git clone https://github.com/your-handle/rag-starter.git
