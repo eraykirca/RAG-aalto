@@ -33,8 +33,6 @@ python app.py             # interactive Q&A
 ```
 
 # 🚀 Setup & Usage
-git clone https://github.com/your-handle/rag-starter.git
-cd rag-starter
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\Activate
 pip install -r requirements.txt
 
